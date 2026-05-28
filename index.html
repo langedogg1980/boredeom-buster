@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>BOREDOM BUSTER!!!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Boogaloo&family=Bungee&family=Space+Mono:wght@700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ TOKENS ============ */
+  :root {
+    --ink: #0e0e10;
+    --paper: #fff7e6;
+    --yellow: #ffd400;
+    --coral: #ff5a5f;
+    --lime: #aef359;
+    --sky: #4cc9f0;
+    --grape: #b07cff;
+    --hot-pink: #ff3ea5;
+    --orange: #ff8a1f;
+
+    /* per-kid accents */
+    --colin: #4cc9f0;     /* sky blue */
+    --colin-2: #aef359;   /* lime */
+    --miles: #ff5a5f;     /* hot coral */
+    --miles-2: #ff8a1f;   /* orange */
+    --either: #b07cff;    /* grape */
+    --either-2: #ffd400;  /* yellow */
+
+    --stroke: 4px;
+    --stroke-thick: 6px;
+    --r-blob: 28px;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Fredoka One", "Boogaloo", system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    min-height: 100svh;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============ DOODLE BACKGROUND ============ */
+  .doodle-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-color: var(--paper);
+    background-image:
+      /* squiggle */
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><g fill='none' stroke='%230e0e10' stroke-width='3' stroke-linecap='round'><path d='M10 30 q10 -10 20 0 t20 0 t20 0 t20 0'/><circle cx='95' cy='75' r='6'/><path d='M20 90 l8 -8 M28 90 l-8 -8'/><path d='M70 20 l4 -8 M74 12 l4 8 M78 20 l4 -8' /><path d='M55 105 q5 -6 10 0' /></g></svg>"),
+      /* stars + dots */
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'><g fill='%230e0e10'><circle cx='20' cy='20' r='3'/><circle cx='150' cy='40' r='2.5'/><circle cx='90' cy='150' r='3'/></g><g fill='none' stroke='%230e0e10' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M120 100 l4 -10 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4z' fill='%23ffd400'/><path d='M40 110 l3 -8 l3 8 l8 3 l-8 3 l-3 8 l-3 -8 l-8 -3z' fill='%23ff5a5f'/></g></svg>");
+    background-size: 240px 240px, 360px 360px;
+    background-position: 0 0, 40px 60px;
+    opacity: .55;
+    animation: drift 40s linear infinite;
+  }
+  @keyframes drift {
+    0%   { background-position: 0 0, 40px 60px; }
+    100% { background-position: 240px 240px, 400px 420px; }
+  }
+  .doodle-bg::after {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(76,201,240,.25), transparent 50%),
+      radial-gradient(ellipse at 90% 30%, rgba(255,90,95,.20), transparent 50%),
+      radial-gradient(ellipse at 50% 100%, rgba(174,243,89,.30), transparent 55%);
+  }
+
+  /* ============ APP SHELL ============ */
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 18px 18px 40px;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  /* ============ HEADER ============ */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .wordmark {
+    font-family: "Bungee", "Fredoka One", sans-serif;
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: -.5px;
+    background: var(--ink);
+    color: var(--yellow);
+    padding: 10px 14px 8px;
+    border-radius: 14px;
+    border: var(--stroke) solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink);
+    transform: rotate(-3deg);
+  }
+  .wordmark .b1 { color: var(--coral); }
+  .wordmark .b2 { color: var(--lime); }
+  .wordmark .b3 { color: var(--sky); }
+
+  /* weather chip */
+  .weather {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: var(--stroke) solid var(--ink);
+    border-radius: 999px;
+    padding: 8px 14px 6px 10px;
+    box-shadow: 3px 3px 0 var(--ink);
+    transform: rotate(2deg);
+    font-family: "Boogaloo", sans-serif;
+    font-size: 18px;
+    min-height: 44px;
+  }
+  .weather .ico {
+    font-size: 22px;
+    display: inline-block;
+    transform: translateY(-1px);
+  }
+  .weather .temp { font-weight: 700; }
+  .weather .lbl {
+    font-family: "Space Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: #555;
+    text-transform: uppercase;
+    margin-left: 4px;
+  }
+
+  /* ============ KID SELECTOR ============ */
+  .kids {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    background: #fff;
+    border: var(--stroke) solid var(--ink);
+    border-radius: 22px;
+    padding: 6px;
+    box-shadow: 5px 5px 0 var(--ink);
+    position: relative;
+  }
+  .kid-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    background: transparent;
+    padding: 14px 6px 12px;
+    font-family: "Fredoka One", sans-serif;
+    font-size: 18px;
+    color: var(--ink);
+    border-radius: 16px;
+    cursor: pointer;
+    min-height: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    line-height: 1;
+    transition: transform .15s ease;
+    position: relative;
+  }
+  .kid-btn .emoji {
+    font-size: 22px;
+    line-height: 1;
+  }
+  .kid-btn .name { letter-spacing: .5px; }
+  .kid-btn[aria-pressed="true"] {
+    color: var(--ink);
+    box-shadow: inset 0 0 0 3px var(--ink);
+    transform: translateY(-2px) rotate(-1deg);
+  }
+  .kid-btn[data-kid="colin"][aria-pressed="true"]  { background: var(--colin); }
+  .kid-btn[data-kid="miles"][aria-pressed="true"]  { background: var(--miles); color: #fff; }
+  .kid-btn[data-kid="either"][aria-pressed="true"] { background: var(--either); color:#fff; }
+  .kid-btn:active { transform: translateY(1px) scale(.97); }
+
+  /* ============ HERO BORED BUTTON ============ */
+  .stage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 10px 0 0;
+    min-height: 360px;
+    position: relative;
+  }
+  .hero-wrap {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  .bored-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    border: var(--stroke-thick) solid var(--ink);
+    background: var(--yellow);
+    color: var(--ink);
+    font-family: "Bungee", "Fredoka One", sans-serif;
+    font-size: clamp(48px, 14vw, 72px);
+    line-height: .9;
+    letter-spacing: -1px;
+    padding: 38px 28px 30px;
+    border-radius: 50% 46% 52% 48% / 48% 52% 46% 54%;
+    width: min(82vw, 340px);
+    height: min(82vw, 340px);
+    box-shadow:
+      0 0 0 0 var(--ink),
+      10px 10px 0 var(--ink);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    animation: wobble 2.2s ease-in-out infinite;
+    transform-origin: center;
+    text-shadow: 3px 3px 0 #fff;
+    position: relative;
+    z-index: 2;
+  }
+  .bored-btn .small {
+    font-family: "Boogaloo", sans-serif;
+    font-size: 22px;
+    text-shadow: none;
+    margin-top: 6px;
+    letter-spacing: 1px;
+    color: var(--ink);
+    opacity: .85;
+  }
+  .bored-btn:active {
+    transform: scale(.95) rotate(-2deg);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  @keyframes wobble {
+    0%, 100% { transform: rotate(-3deg) scale(1); }
+    25%      { transform: rotate(2deg)  scale(1.03); }
+    50%      { transform: rotate(-2deg) scale(.98); }
+    75%      { transform: rotate(3deg)  scale(1.02); }
+  }
+  .bored-btn.smash {
+    animation: smash .55s cubic-bezier(.3,1.6,.5,1) 1;
+  }
+  @keyframes smash {
+    0%   { transform: scale(1) rotate(0); }
+    35%  { transform: scale(1.18) rotate(-6deg); }
+    70%  { transform: scale(.82) rotate(5deg); }
+    100% { transform: scale(1) rotate(0); }
+  }
+
+  /* floating tags around the hero */
+  .float-tag {
+    position: absolute;
+    font-family: "Boogaloo", sans-serif;
+    background: #fff;
+    color: var(--ink);
+    border: var(--stroke) solid var(--ink);
+    border-radius: 14px;
+    padding: 6px 10px 4px;
+    font-size: 16px;
+    box-shadow: 3px 3px 0 var(--ink);
+    z-index: 3;
+    pointer-events: none;
+  }
+  .ft-1 { top: 4px; left: 0; background: var(--coral); color: #fff; transform: rotate(-10deg); }
+  .ft-2 { top: 30px; right: 0; background: var(--lime); transform: rotate(8deg); }
+  .ft-3 { bottom: 0; left: 14px; background: var(--sky); transform: rotate(6deg); }
+  .ft-4 { bottom: 18px; right: 10px; background: var(--hot-pink); color:#fff; transform: rotate(-7deg); }
+
+  /* ============ ACTIVITY CARD ============ */
+  .card {
+    position: relative;
+    width: min(86vw, 360px);
+    border: var(--stroke-thick) solid var(--ink);
+    border-radius: var(--r-blob);
+    background: #fff;
+    padding: 22px 22px 18px;
+    box-shadow: 8px 8px 0 var(--ink);
+    text-align: center;
+    transform-origin: center;
+  }
+  .card[hidden] { display: none !important; }
+  .card.flip-in {
+    animation: flipIn .7s cubic-bezier(.2,1.4,.3,1) 1;
+  }
+  @keyframes flipIn {
+    0%   { transform: rotateX(90deg) scale(.4) rotate(-12deg); opacity: 0; }
+    60%  { transform: rotateX(-10deg) scale(1.05) rotate(4deg); opacity: 1; }
+    100% { transform: rotateX(0)    scale(1)   rotate(-2deg); opacity: 1; }
+  }
+  .card .ribbon {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-3deg);
+    background: var(--ink);
+    color: var(--yellow);
+    font-family: "Bungee", sans-serif;
+    font-size: 14px;
+    padding: 6px 14px 4px;
+    border-radius: 10px;
+    border: 3px solid var(--ink);
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .card .tag {
+    display: inline-block;
+    font-family: "Boogaloo", sans-serif;
+    font-size: 14px;
+    background: var(--lime);
+    border: 3px solid var(--ink);
+    border-radius: 999px;
+    padding: 4px 10px 2px;
+    margin-bottom: 8px;
+    transform: rotate(-2deg);
+  }
+  .card .emoji-big {
+    font-size: 64px;
+    line-height: 1;
+    display: block;
+    margin: 4px 0 6px;
+    animation: bounce 1.6s ease-in-out infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    50%      { transform: translateY(-8px) rotate(5deg); }
+  }
+  .card .title {
+    font-family: "Fredoka One", sans-serif;
+    font-size: 30px;
+    line-height: 1.05;
+    margin: 4px 0 8px;
+    text-wrap: balance;
+  }
+  .card .blurb {
+    font-family: "Boogaloo", sans-serif;
+    font-size: 18px;
+    color: #2a2a2e;
+    margin: 0 0 16px;
+    text-wrap: pretty;
+  }
+  .card .who {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Space Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #555;
+  }
+  .card .who .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 2px solid var(--ink);
+    display: inline-block;
+  }
+
+  /* re-roll button */
+  .reroll {
+    appearance: none;
+    -webkit-appearance: none;
+    border: var(--stroke) solid var(--ink);
+    background: var(--coral);
+    color: #fff;
+    font-family: "Bungee", sans-serif;
+    font-size: 18px;
+    padding: 14px 18px 12px;
+    border-radius: 18px 22px 18px 22px / 22px 18px 22px 18px;
+    box-shadow: 5px 5px 0 var(--ink);
+    cursor: pointer;
+    letter-spacing: 1px;
+    min-height: 52px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transform: rotate(-1.5deg);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .reroll:hover { transform: rotate(-1.5deg) translateY(-2px); }
+  .reroll:active { transform: rotate(-1.5deg) translate(2px, 3px); box-shadow: 2px 2px 0 var(--ink); }
+  .reroll[hidden] { display: none; }
+  .reroll .arrow {
+    display: inline-block;
+    animation: spinArrow 2s linear infinite;
+  }
+  @keyframes spinArrow {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ============ CONFETTI ============ */
+  .confetti-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 50;
+    overflow: hidden;
+  }
+  .confetti {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    will-change: transform, opacity;
+  }
+  .confetti.sq { border-radius: 3px; }
+  .confetti.ci { border-radius: 50%; }
+  .confetti.st {
+    width: 18px; height: 18px;
+    background: transparent !important;
+    color: var(--yellow);
+    font-size: 22px;
+    line-height: 1;
+    font-family: sans-serif;
+  }
+  .confetti.st::before { content: "★"; }
+
+  /* ============ FOOTER STAMP ============ */
+  .stamp {
+    text-align: center;
+    font-family: "Space Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #6a6a6e;
+    margin-top: auto;
+    padding-top: 12px;
+    text-transform: uppercase;
+  }
+  .stamp .blob {
+    display: inline-block;
+    padding: 6px 10px 4px;
+    border: 2px dashed var(--ink);
+    border-radius: 10px;
+    transform: rotate(-1deg);
+    background: rgba(255,255,255,.5);
+  }
+
+  /* ============ SR ONLY ============ */
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+  /* tweak for tiny phones */
+  @media (max-height: 700px) {
+    .stage { min-height: 320px; }
+    .bored-btn { width: min(70vw, 280px); height: min(70vw, 280px); font-size: clamp(40px, 12vw, 60px); }
+    .card .emoji-big { font-size: 52px; }
+    .card .title { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+  <div class="doodle-bg" aria-hidden="true"></div>
+
+  <main class="app" data-screen-label="Boredom Buster">
+    <!-- HEADER -->
+    <header class="topbar">
+      <div class="wordmark" aria-label="Boredom Buster">
+        <span class="b1">B</span><span class="b2">O</span><span class="b3">R</span>ED?!
+      </div>
+      <div class="weather" id="weather" aria-live="polite" title="Lincoln, NE 68516">
+        <span class="ico" id="wIco">⛅</span>
+        <span class="temp" id="wTemp">--°</span>
+        <span class="lbl">LNK</span>
+      </div>
+    </header>
+
+    <!-- KID SELECTOR -->
+    <nav class="kids" role="tablist" aria-label="Who's bored?">
+      <button class="kid-btn" data-kid="colin"  role="tab" aria-pressed="false">
+        <span class="emoji">🎸</span><span class="name">COLIN</span>
+      </button>
+      <button class="kid-btn" data-kid="miles"  role="tab" aria-pressed="false">
+        <span class="emoji">⚾</span><span class="name">MILES</span>
+      </button>
+      <button class="kid-btn" data-kid="either" role="tab" aria-pressed="true">
+        <span class="emoji">🤝</span><span class="name">EITHER</span>
+      </button>
+    </nav>
+
+    <!-- STAGE -->
+    <section class="stage" id="stage">
+      <div class="hero-wrap" id="heroWrap">
+        <span class="float-tag ft-1">PRESS ME!</span>
+        <span class="float-tag ft-2">★ WOW ★</span>
+        <span class="float-tag ft-3">DO IT</span>
+        <span class="float-tag ft-4">!!!</span>
+
+        <button class="bored-btn" id="boredBtn" aria-label="I'm bored, give me something to do">
+          I'M<br/>BORED
+          <span class="small">tap to bust it</span>
+        </button>
+      </div>
+
+      <article class="card" id="card" hidden aria-live="polite">
+        <span class="ribbon">YOUR MISSION</span>
+        <span class="tag" id="cTag">indoor</span>
+        <span class="emoji-big" id="cEmoji">🎯</span>
+        <h2 class="title" id="cTitle">Build a LEGO masterpiece</h2>
+        <p class="blurb" id="cBlurb">Pick a tub, dump it out, no plans — just chaos engineering.</p>
+        <span class="who"><span class="dot" id="cDot"></span><span id="cWho">For Colin</span></span>
+      </article>
+
+      <button class="reroll" id="reroll" hidden>
+        <span class="arrow">🔄</span> TRY ANOTHER ONE
+      </button>
+    </section>
+
+    <footer class="stamp">
+      <span class="blob">made for Colin &amp; Miles · est. summer · Lincoln NE</span>
+    </footer>
+  </main>
+
+  <div class="confetti-layer" id="confetti" aria-hidden="true"></div>
+
+  <script>
+  /* ============================================================
+     BOREDOM BUSTER — vanilla JS
+     ============================================================ */
+
+  // ---------- ACTIVITY POOLS ----------
+  // tags: indoor | outdoor | either
+  const ACTIVITIES = {
+    colin: [
+      { t:"Build a LEGO MEGA-FORT", e:"🧱", b:"No instructions allowed. The weirder, the cooler.", tag:"indoor" },
+      { t:"Draw your own manga page", e:"✏️", b:"One page. One hero. Bonus points for sound effects (KAPOW!).", tag:"indoor" },
+      { t:"BEAT your high score", e:"🎮", b:"Pick a game and don't stop 'til you've crushed your record.", tag:"indoor" },
+      { t:"Play guitar for 20 min", e:"🎸", b:"Learn one new riff. Loud is the only volume.", tag:"indoor" },
+      { t:"Invent a smoothie", e:"🥤", b:"3+ ingredients. Name it something ridiculous.", tag:"indoor" },
+      { t:"Build a backyard obstacle course", e:"🏃", b:"Use what's outside. Time yourself. Beat that time.", tag:"outdoor" },
+      { t:"Stop-motion LEGO movie", e:"🎬", b:"30 frames. A tiny plot. Action!", tag:"indoor" },
+      { t:"Design a manga villain", e:"😈", b:"Backstory + signature move. Make them awful.", tag:"indoor" },
+      { t:"Speedrun a level", e:"⚡", b:"Pick one level. Optimize. Become unstoppable.", tag:"indoor" },
+      { t:"Write a guitar song", e:"🎼", b:"4 chords, dumb lyrics, total banger.", tag:"indoor" },
+      { t:"Smoothie taste-test challenge", e:"🍓", b:"Make 3. Blind taste-test with Miles. Loser cleans up.", tag:"indoor" },
+      { t:"LEGO speed-build race", e:"⏱️", b:"Same set, two builders. Fastest wins glory.", tag:"indoor" },
+      { t:"Hit the pool", e:"🏊", b:"Cannonballs, handstands, breath-holding contest. GO.", tag:"outdoor" },
+      { t:"Underwater treasure dive", e:"🤿", b:"Toss stuff in the deep end. Race to grab it all.", tag:"outdoor" },
+    ],
+    miles: [
+      { t:"Make a video", e:"🎥", b:"Pick a topic. 60 seconds. Edit it like a pro.", tag:"indoor" },
+      { t:"Bake something sweet", e:"🧁", b:"Cookies? Brownies? Mystery banana bread? GO.", tag:"indoor" },
+      { t:"Go for a bike ride", e:"🚴", b:"New route. Find something you've never seen before.", tag:"outdoor" },
+      { t:"Baseball swing practice", e:"⚾", b:"50 swings. Focus on follow-through. No phone.", tag:"outdoor" },
+      { t:"Swim laps or splash session", e:"🏊", b:"30 minutes in the water. Cannonballs encouraged.", tag:"outdoor" },
+      { t:"Go fishing", e:"🎣", b:"Grab a pole. Pick a spot. Patience = points.", tag:"outdoor" },
+      { t:"Film a movie trailer", e:"🎞️", b:"For a movie that doesn't exist. Make it epic.", tag:"indoor" },
+      { t:"Bake a weird cookie", e:"🍪", b:"Add something nobody adds. Pretzels? Cereal? Yes.", tag:"indoor" },
+      { t:"Bike scavenger hunt", e:"🗺️", b:"Find 5 things in the neighborhood. Photo proof.", tag:"outdoor" },
+      { t:"Home run derby", e:"💥", b:"Wiffle ball + tee. How many can you launch?", tag:"outdoor" },
+      { t:"Pool game tournament", e:"🏆", b:"Marco polo, sharks, diving for stuff. Bracket-style.", tag:"outdoor" },
+      { t:"Tie your own lure", e:"🪝", b:"Use random stuff. Test it next time you fish.", tag:"indoor" },
+      { t:"Diving board tricks", e:"🤸", b:"Invent 3 new dives. Rate each one out of 10.", tag:"outdoor" },
+      { t:"Pool lap challenge", e:"🏊", b:"How many laps without stopping? Beat it tomorrow.", tag:"outdoor" },
+    ],
+    either: [
+      { t:"DRAWING BATTLE!", e:"⚔️", b:"5 min timer, same subject, no peeking. Mom judges.", tag:"indoor" },
+      { t:"Documentary + Quiz Showdown", e:"🧠", b:"Watch one together. Make 5 questions. Lowest score does dishes.", tag:"indoor" },
+      { t:"Build each other a scavenger hunt", e:"🔍", b:"10 clues. No going outside without telling someone.", tag:"either" },
+      { t:"Bike to adventure golf", e:"⛳", b:"Helmets on. Trash talk allowed. Loser buys ice cream.", tag:"outdoor" },
+      { t:"Film a fake commercial", e:"📺", b:"For a thing in your house. The dumber the product, the better.", tag:"indoor" },
+      { t:"Invent a new sport", e:"🏐", b:"Rules. A name. A weird scoring system. Play it.", tag:"either" },
+      { t:"Lava floor challenge", e:"🌋", b:"Couch cushions only. No feet on the floor. 5 minutes.", tag:"indoor" },
+      { t:"Brother vs. brother bake-off", e:"🥧", b:"Same 5 ingredients. Make something different. Family judges.", tag:"indoor" },
+      { t:"Backwards day", e:"🔄", b:"Eat dessert first, walk backwards, wear shirts inside out. Commit.", tag:"either" },
+      { t:"Two-player podcast", e:"🎙️", b:"Record 5 minutes. Pick a topic neither of you knows about.", tag:"indoor" },
+      { t:"Sidewalk chalk mural", e:"🎨", b:"Whole driveway. One giant scene. Sign it.", tag:"outdoor" },
+      { t:"Make a hot sauce", e:"🌶️", b:"Mix stuff from the fridge. Dare each other to taste.", tag:"indoor" },
+      { t:"Swim sesh — bros vs. pool", e:"🏊", b:"Marco polo, sharks & minnows, breath-hold contest. Winner picks dinner.", tag:"outdoor" },
+      { t:"Walk to Taco Bell", e:"🌮", b:"On foot. Order something weird. Rate it on the walk home.", tag:"outdoor" },
+      { t:"Bike to Raising Cane's", e:"🐔", b:"Helmets on. Sauce ranking required when you get back.", tag:"outdoor" },
+      { t:"Bike to Humann Elementary", e:"🏫", b:"Hit the playground. Re-live your tiny-kid era.", tag:"outdoor" },
+      { t:"SLIP N SLIDE", e:"💦", b:"Set it up. Soap it up. Belly flops only.", tag:"outdoor" },
+      { t:"Monopoly grudge match", e:"🎩", b:"Full game. No quitting when you start losing. RULES.", tag:"indoor" },
+      { t:"Chess showdown", e:"♟️", b:"Best of 3. Loser sets the board next time.", tag:"indoor" },
+      { t:"Game of Life", e:"🎲", b:"Pick your career, marry a peg, pay your bills. Classic.", tag:"indoor" },
+      { t:"402 Creamery run", e:"🍦", b:"Walk or bike. Try a flavor you've never had. No takebacks.", tag:"outdoor" },
+    ],
+  };
+
+  // ---------- STATE ----------
+  const state = {
+    kid: "either",       // colin | miles | either
+    indoorOnly: false,   // forced by weather
+    weatherCode: null,
+    temp: null,
+    lastIdx: { colin: -1, miles: -1, either: -1 },
+  };
+
+  // ---------- DOM ----------
+  const $ = (sel) => document.querySelector(sel);
+  const els = {
+    kidBtns: document.querySelectorAll(".kid-btn"),
+    boredBtn: $("#boredBtn"),
+    card: $("#card"),
+    cTitle: $("#cTitle"),
+    cBlurb: $("#cBlurb"),
+    cEmoji: $("#cEmoji"),
+    cTag: $("#cTag"),
+    cWho: $("#cWho"),
+    cDot: $("#cDot"),
+    reroll: $("#reroll"),
+    confetti: $("#confetti"),
+    heroWrap: $("#heroWrap"),
+    wIco: $("#wIco"),
+    wTemp: $("#wTemp"),
+    weather: $("#weather"),
+  };
+
+  // ---------- KID SWITCHER ----------
+  els.kidBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const kid = btn.dataset.kid;
+      state.kid = kid;
+      els.kidBtns.forEach(b => b.setAttribute("aria-pressed", b === btn));
+      // re-color hero
+      const color = kid === "colin" ? "var(--colin)"
+                  : kid === "miles" ? "var(--miles)"
+                  : "var(--either)";
+      const text = kid === "miles" ? "#fff" : (kid === "either" ? "#fff" : "var(--ink)");
+      els.boredBtn.style.background = color;
+      els.boredBtn.style.color = text;
+      els.boredBtn.style.textShadow = (kid === "miles" || kid === "either")
+        ? "3px 3px 0 rgba(0,0,0,.25)"
+        : "3px 3px 0 #fff";
+      // little wobble on switch
+      els.boredBtn.classList.remove("smash");
+      void els.boredBtn.offsetWidth;
+      els.boredBtn.classList.add("smash");
+    });
+  });
+
+  // ---------- WEATHER ----------
+  function weatherEmoji(code) {
+    if (code == null) return "❓";
+    if (code === 0) return "☀️";
+    if ([1,2].includes(code)) return "🌤️";
+    if (code === 3) return "☁️";
+    if ([45,48].includes(code)) return "🌫️";
+    if (code >= 51 && code <= 57) return "🌦️";
+    if (code >= 61 && code <= 67) return "🌧️";
+    if (code >= 71 && code <= 77) return "❄️";
+    if (code >= 80 && code <= 82) return "🌧️";
+    if (code >= 95) return "⛈️";
+    return "🌥️";
+  }
+  function weatherLabel(code) {
+    if (code == null) return "—";
+    if (code === 0) return "SUNNY";
+    if ([1,2].includes(code)) return "PARTLY";
+    if (code === 3) return "CLOUDY";
+    if (code >= 61 && code <= 67) return "RAINY";
+    if (code >= 80 && code <= 82) return "SHOWERS";
+    if (code >= 95) return "STORMY";
+    if (code >= 71 && code <= 77) return "SNOW";
+    return "MEH";
+  }
+
+  async function fetchWeather() {
+    try {
+      const r = await fetch("https://api.open-meteo.com/v1/forecast?latitude=40.7819&longitude=-96.6044&current_weather=true&temperature_unit=fahrenheit");
+      const j = await r.json();
+      const cw = j.current_weather || {};
+      state.weatherCode = cw.weathercode ?? null;
+      state.temp = cw.temperature ?? null;
+      state.indoorOnly = (state.weatherCode != null && state.weatherCode >= 61);
+      els.wIco.textContent = weatherEmoji(state.weatherCode);
+      els.wTemp.textContent = state.temp != null ? Math.round(state.temp) + "°" : "--°";
+      els.weather.title = `Lincoln, NE — ${weatherLabel(state.weatherCode)} ${state.temp != null ? Math.round(state.temp)+"°F" : ""}${state.indoorOnly ? " · INDOOR MODE" : ""}`;
+    } catch (e) {
+      console.warn("weather fetch failed", e);
+      els.wIco.textContent = "❓";
+      els.wTemp.textContent = "--°";
+    }
+  }
+
+  // ---------- PICK ACTIVITY ----------
+  function pool() {
+    let list;
+    if (state.kid === "either") {
+      list = ACTIVITIES.either.slice();
+    } else {
+      list = ACTIVITIES[state.kid].slice();
+    }
+    if (state.indoorOnly) {
+      list = list.filter(a => a.tag !== "outdoor");
+    }
+    return list;
+  }
+
+  function pickActivity() {
+    const list = pool();
+    if (!list.length) return null;
+    // avoid immediate repeat
+    let idx;
+    let tries = 0;
+    do {
+      idx = Math.floor(Math.random() * list.length);
+      tries++;
+    } while (list.length > 1 && idx === state.lastIdx[state.kid] && tries < 8);
+    state.lastIdx[state.kid] = idx;
+    return list[idx];
+  }
+
+  function renderActivity(a) {
+    if (!a) return;
+    els.cTitle.textContent = a.t;
+    els.cBlurb.textContent = a.b;
+    els.cEmoji.textContent = a.e;
+
+    // tag styling
+    const isOut = a.tag === "outdoor";
+    els.cTag.textContent = isOut ? "OUTDOOR" : (a.tag === "either" ? "ANYWHERE" : "INDOOR");
+    els.cTag.style.background = isOut ? "var(--lime)" : (a.tag === "either" ? "var(--sky)" : "var(--yellow)");
+
+    // who line + dot
+    const who = state.kid === "colin" ? "For Colin"
+              : state.kid === "miles" ? "For Miles"
+              : "For both bros";
+    els.cWho.textContent = who;
+    els.cDot.style.background = state.kid === "colin" ? "var(--colin)"
+                              : state.kid === "miles" ? "var(--miles)"
+                              : "var(--either)";
+
+    // animate
+    els.card.hidden = false;
+    els.card.classList.remove("flip-in");
+    void els.card.offsetWidth;
+    els.card.classList.add("flip-in");
+    els.reroll.hidden = false;
+  }
+
+  // ---------- CONFETTI ----------
+  const CONFETTI_COLORS = ["#ffd400","#ff5a5f","#aef359","#4cc9f0","#b07cff","#ff3ea5","#ff8a1f"];
+  function burst(x, y, count = 28) {
+    const layer = els.confetti;
+    for (let i = 0; i < count; i++) {
+      const c = document.createElement("span");
+      const isStar = Math.random() < .25;
+      const shape = isStar ? "st" : (Math.random() < .5 ? "sq" : "ci");
+      c.className = "confetti " + shape;
+      if (!isStar) c.style.background = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+      else c.style.color = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+      c.style.left = (x - 7) + "px";
+      c.style.top  = (y - 7) + "px";
+
+      const angle = Math.random() * Math.PI * 2;
+      const dist  = 80 + Math.random() * 220;
+      const dx = Math.cos(angle) * dist;
+      const dy = Math.sin(angle) * dist - 120; // bias upward
+      const rot = (Math.random() * 720 - 360);
+      const dur = 700 + Math.random() * 700;
+
+      layer.appendChild(c);
+      const anim = c.animate(
+        [
+          { transform: "translate(0,0) rotate(0deg) scale(1)", opacity: 1 },
+          { transform: `translate(${dx}px, ${dy + 240}px) rotate(${rot}deg) scale(${.6 + Math.random()*.6})`, opacity: 0 },
+        ],
+        { duration: dur, easing: "cubic-bezier(.2,.7,.3,1)", fill: "forwards" }
+      );
+      anim.onfinish = () => c.remove();
+    }
+  }
+
+  function burstFromEl(el) {
+    const r = el.getBoundingClientRect();
+    burst(r.left + r.width / 2, r.top + r.height / 2, 36);
+  }
+
+  // ---------- INTERACTIONS ----------
+  function doReveal(originEl) {
+    const a = pickActivity();
+    if (!a) return;
+    renderActivity(a);
+    burstFromEl(originEl);
+    // also hide the float tags after first press so card has the spotlight
+    document.querySelectorAll(".float-tag").forEach((t,i) => {
+      t.style.transition = "opacity .35s ease, transform .35s ease";
+      t.style.opacity = ".0";
+      t.style.transform += " translateY(-20px)";
+    });
+  }
+
+  els.boredBtn.addEventListener("click", () => {
+    els.boredBtn.classList.remove("smash");
+    void els.boredBtn.offsetWidth;
+    els.boredBtn.classList.add("smash");
+    doReveal(els.boredBtn);
+    // shrink hero a touch after first press so card has room
+    els.boredBtn.style.width = "min(60vw, 230px)";
+    els.boredBtn.style.height = "min(60vw, 230px)";
+    els.boredBtn.style.fontSize = "clamp(34px, 10vw, 50px)";
+  });
+
+  els.reroll.addEventListener("click", () => {
+    doReveal(els.reroll);
+  });
+
+  // ---------- INIT ----------
+  fetchWeather();
+  </script>
+</body>
+</html>
